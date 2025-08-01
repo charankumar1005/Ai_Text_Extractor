@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>File Extractor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <h1>📄 Upload a File for Extraction</h1>
+
+    <form id="uploadForm">
+        <input type="file" name="file" id="fileInput" accept=".jpg,.jpeg,.png,.pdf,.docx,.txt" required />
+        <!-- <br> -->
+        <div class="note">⚠️ Supported file types: JPG, JPEG, PNG, PDF, DOCX, TXT</div>
+        <button type="submit">Extract Information</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        const form = document.getElementById('uploadForm');
+        const resultDiv = document.getElementById('result');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            resultDiv.innerHTML = "⏳ Processing...";
+
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                resultDiv.innerHTML = `<span class="error">❌ Please upload a file.</span>`;
+                return;
+            }
+
+            const allowedExtensions = /\.(jpg|jpeg|png|pdf|docx|txt)$/i;
+            if (!allowedExtensions.test(file.name)) {
+                resultDiv.innerHTML = `<span class="error">❌ Unsupported file type.</span>`;
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/extract', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Server responded with ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.result) {
+                    resultDiv.innerHTML = `<pre style="white-space: pre-wrap; word-break: break-word;">${data.result}</pre>`;
+                } else {
+                    resultDiv.innerHTML = `<span class="error">❌ ${data.error}</span>`;
+                }
+            } catch (err) {
+                resultDiv.innerHTML = `<span class="error">❌ ${err.message}</span>`;
+            }
+        });
+    </script>
+</body>
+
+</html>
