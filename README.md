@@ -5,7 +5,6 @@ A web application built using **Flask** (backend) and **HTML/CSS/JavaScript** (f
 - 📄 Extract and display content clearly
 - 📦 Backend using Flask (Python)
 - 🎨 Modern frontend with gradient headings and styled UI
-- 🌐 Ready for deployment on platforms like Render or Replit
 ---
 ## 🛠 Tech Stack
 
